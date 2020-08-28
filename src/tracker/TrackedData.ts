@@ -1,0 +1,63 @@
+import fs from 'fs';
+import vscode from 'vscode';
+import { ISessionInfo, TrackedSession } from './TrackedSession';
+
+export class TrackedData {
+    private readonly _storageFile: string;
+
+    private _sessions: ISessionInfo[];
+    public get sessions() {
+        return this._sessions;
+    }
+
+    private _totalTime: number;
+    public get totalTime() {
+        return this._totalTime;
+    }
+
+    constructor(storageFile: string) {
+        this._storageFile = storageFile;
+        this._sessions = [];
+        this._totalTime = 0;
+        this.load();
+    }
+
+    private updateTotalTime() {
+        this._totalTime = this._sessions.map(s => s.duration).reduce((acc, d) => acc += d);
+    }
+
+    public addSession(session: TrackedSession) {
+        this._sessions.push(session.export());
+        this.updateTotalTime();
+        this.save();
+    }
+
+    public load() {
+        if (fs.existsSync(this._storageFile)) {
+            try {
+                const dataString = fs.readFileSync(this._storageFile).toString();
+                const data = JSON.parse(dataString);
+                this._sessions = data.sessions;
+                this._totalTime = data.total;
+            } catch (error) {
+                vscode.window.showErrorMessage(`Unable to read stored time tracking data due to: ${error.message}`);
+            }
+        } else {
+            this._sessions = [];
+            this._totalTime = 0;
+        }
+    }
+
+    public save() {
+        try {
+            fs.writeFileSync(this._storageFile, JSON.stringify({
+                total: this._totalTime,
+                sessions: this._sessions
+            }), {
+                encoding: 'utf-8'
+            });
+        } catch (error) {
+            vscode.window.showErrorMessage(`Unable to store time tracking data due to: ${error.message}`);
+        }
+    }
+}
