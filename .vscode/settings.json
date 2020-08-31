@@ -7,8 +7,8 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "out": true,
-        ".vscode": false,
-        ".vscode-test": false,
+        ".vscode": true,
+        ".vscode-test": true,
         "node_modules": true
     },
     "search.exclude": {
