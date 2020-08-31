@@ -11,25 +11,25 @@ const ICON_ACTIVE = '$(eye)';
 const ICON_INACTIVE = '$(eye-closed)';
 
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(		
+	context.subscriptions.push(
 		vscode.commands.registerCommand('timetracker.start', ( ) => {
 			if (tracker.start(updateStatusBarItem)) {
-				vscode.window.showInformationMessage(`TimeTracker started at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
+//				vscode.window.showInformationMessage(`TimeTracker started at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
 				updateStatusBarItem(tracker);
 			}
 		}),
 		vscode.commands.registerCommand('timetracker.stop', () => {
 			if (tracker.stop()) {
-				vscode.window.showInformationMessage(`TimeTracker stopped at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
+//				vscode.window.showInformationMessage(`TimeTracker stopped at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
 				updateStatusBarItem(tracker);
 			}
 		})
 	);
 
-	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);	
+	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
 	statusBarItem.show();
 
-	context.subscriptions.push(statusBarItem);	
+	context.subscriptions.push(statusBarItem);
 
 	context.subscriptions.push(
 		vscode.window.onDidChangeVisibleTextEditors(() => {
@@ -48,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 function updateStatusBarItem(timeTracker: TimeTracker) {
 	const data = timeTracker.trackedData;
-	if (data) {		
+	if (data) {
 		const currentSessionSeconds = tracker.currentSession?.currentDuration() ?? 0;
 		const totalSeconds = data.totalTime + currentSessionSeconds;
 		const icon = timeTracker.state === TimeTrackerState.started ? ICON_ACTIVE : ICON_INACTIVE;

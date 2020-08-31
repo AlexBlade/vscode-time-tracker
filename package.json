@@ -1,9 +1,9 @@
 {
     "name": "timetracker",
-    "publisher": "Xenolab",
+    "publisher": "Blade",
     "displayName": "Time Tracker",
-    "description": "Work hours time tracker",
-    "version": "0.0.1",
+    "description": "Work hours time tracker. Count you work time in background, store it within project's files in the Git repo.",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.48.0"
     },
@@ -13,7 +13,7 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./out/extension.js",
+    "main": "./dist/tracker.js",
     "contributes": {
         "commands": [
             {
@@ -37,7 +37,8 @@
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "bundle:dev": "webpack  --env.NODE_ENV=local --env.mode=development --mode=development --config-name=vscode-time-tracker",
-        "bundle:prod": "webpack  --env.NODE_ENV=local --env.mode=production --mode=production --config-name=vscode-time-tracker"
+        "bundle:prod": "webpack  --env.NODE_ENV=local --env.mode=production --mode=production --config-name=vscode-time-tracker",
+        "vsix": "vsce package"
     },
     "devDependencies": {
         "@types/vscode": "^1.48.0",

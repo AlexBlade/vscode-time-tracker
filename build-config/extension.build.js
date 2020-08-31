@@ -6,7 +6,8 @@ const extensionBuild = (mode) => {
     const devTool = buildMode === 'production' ? '' : 'source-map';
     const plugins = [];
 
-    return {
+    /**@type {import('webpack').Configuration}*/
+    const config = {
         name: 'vscode-time-tracker',
         mode: buildMode,
         devtool: devTool,
@@ -19,7 +20,8 @@ const extensionBuild = (mode) => {
         },
         output: {
             filename: `[name]${buildTag}.js`,
-            path: path.resolve(__dirname, '../dist')
+            path: path.resolve(__dirname, '../dist'),
+            libraryTarget: 'commonjs2'
         },
         optimization: {
             usedExports: true
@@ -34,9 +36,11 @@ const extensionBuild = (mode) => {
             ]
         },
         externals: {
-            'vscode': 'vscode'
+            vscode: 'commonjs vscode'
         }
     };
+
+    return config;
 };
 
 module.exports = extensionBuild;
