@@ -33,13 +33,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.window.onDidChangeVisibleTextEditors(() => {
-			tracker.resetIdleTime();
+			if (tracker.state === TimeTrackerState.started) {
+				tracker.resetIdleTime();
+			} else {
+				tracker.start(updateStatusBarItem);
+			}
 		}),
 		vscode.window.onDidChangeActiveTextEditor (() => {
-			tracker.resetIdleTime();
+			if (tracker.state === TimeTrackerState.started) {
+				tracker.resetIdleTime();
+			} else {
+				tracker.start(updateStatusBarItem);
+			}
 		}),
 		vscode.window.onDidChangeTextEditorSelection (() => {
-			tracker.resetIdleTime();
+			if (tracker.state === TimeTrackerState.started) {
+				tracker.resetIdleTime();
+			} else {
+				tracker.start(updateStatusBarItem);
+			}
 		})
 	);
 

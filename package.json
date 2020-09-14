@@ -13,16 +13,12 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./dist/tracker.js",
+    "main": "dist/tracker.js",
     "contributes": {
         "commands": [
             {
                 "command": "timetracker.start",
                 "title": "TimeTracker: Start"
-            },
-            {
-                "command": "timetracker.pause",
-                "title": "TimeTracker: Pause"
             },
             {
                 "command": "timetracker.stop",

@@ -41,9 +41,9 @@ export class TimeTracker {
 
         const rootFolder = vscode.workspace.rootPath;
 
-        if (rootFolder) {           
+        if (rootFolder) {
             const filePath = path.join(rootFolder, this.file);
-            this._trackedData = this._trackedData ?? new TrackedData(filePath);    
+            this._trackedData = this._trackedData ?? new TrackedData(filePath);
         }
     }
 
@@ -83,7 +83,7 @@ export class TimeTracker {
         this._trackedData = this._trackedData ?? new TrackedData(filePath);
         this._state = TimeTrackerState.started;
 
-        this._currentSession = new TrackedSession(true);    
+        this._currentSession = new TrackedSession(true);
 
         this._onActiveStateTick = action;
 
