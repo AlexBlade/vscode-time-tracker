@@ -1,4 +1,5 @@
 export enum TimeTrackerState {
-    stopped,
-    started
+    Stopped,
+    Started,
+    Paused
 }

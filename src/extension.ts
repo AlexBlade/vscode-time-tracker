@@ -1,27 +1,34 @@
-import * as vscode from 'vscode';
-import { TimeTracker } from './tracker/TimeTracker';
 import moment from 'moment';
 import 'moment-duration-format';
+import path from 'path';
+import * as vscode from 'vscode';
+import { TimeTracker } from './tracker/TimeTracker';
 import { TimeTrackerState } from './tracker/TimeTrackerState';
 
 const tracker: TimeTracker = new TimeTracker();
 let statusBarItem: vscode.StatusBarItem;
 
-const ICON_ACTIVE = '$(eye)';
-const ICON_INACTIVE = '$(eye-closed)';
+const ICON_STARTED = '$(debug-start)';
+const ICON_STOPPED = '$(debug-stop)';
+const ICON_PAUSED = '$(debug-pause)';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('timetracker.start', ( ) => {
 			if (tracker.start(updateStatusBarItem)) {
-//				vscode.window.showInformationMessage(`TimeTracker started at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
 				updateStatusBarItem(tracker);
 			}
 		}),
 		vscode.commands.registerCommand('timetracker.stop', () => {
 			if (tracker.stop()) {
-//				vscode.window.showInformationMessage(`TimeTracker stopped at ${moment().format('DD.MM.YYYY HH:mm:ss')}`);
 				updateStatusBarItem(tracker);
+			}
+		}),
+		vscode.commands.registerCommand('timetracker.pause', () => {
+			if (tracker.state === TimeTrackerState.Started) {
+				if (tracker.pause()) {
+					updateStatusBarItem(tracker);
+				}
 			}
 		})
 	);
@@ -33,24 +40,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.window.onDidChangeVisibleTextEditors(() => {
-			if (tracker.state === TimeTrackerState.started) {
-				tracker.resetIdleTime();
-			} else {
-				tracker.start(updateStatusBarItem);
-			}
+			reactOnActions();
 		}),
 		vscode.window.onDidChangeActiveTextEditor (() => {
-			if (tracker.state === TimeTrackerState.started) {
-				tracker.resetIdleTime();
-			} else {
-				tracker.start(updateStatusBarItem);
-			}
+			reactOnActions();
 		}),
-		vscode.window.onDidChangeTextEditorSelection (() => {
-			if (tracker.state === TimeTrackerState.started) {
-				tracker.resetIdleTime();
-			} else {
-				tracker.start(updateStatusBarItem);
+		vscode.window.onDidChangeTextEditorSelection ((e) => {
+			if (path.basename(e.textEditor.document.fileName) !== tracker.dataFileName) {
+				reactOnActions();
 			}
 		})
 	);
@@ -58,13 +55,26 @@ export function activate(context: vscode.ExtensionContext) {
 	updateStatusBarItem(tracker);
 }
 
+function reactOnActions() {
+	switch (tracker.state) {
+		case TimeTrackerState.Started:
+			tracker.resetIdleTime();
+			break;
+		case TimeTrackerState.Paused:
+			tracker.continue();
+			break;
+		case TimeTrackerState.Stopped:
+			break;
+	}
+}
+
 function updateStatusBarItem(timeTracker: TimeTracker) {
 	const data = timeTracker.trackedData;
 	if (data) {
 		const currentSessionSeconds = tracker.currentSession?.currentDuration() ?? 0;
 		const totalSeconds = data.totalTime + currentSessionSeconds;
-		const icon = timeTracker.state === TimeTrackerState.started ? ICON_ACTIVE : ICON_INACTIVE;
-		const state = timeTracker.state === TimeTrackerState.started ? 'Active' : 'Inactive';
+		const icon = timeTracker.state === TimeTrackerState.Started ? ICON_STARTED : timeTracker.state === TimeTrackerState.Stopped ? ICON_STOPPED : ICON_PAUSED;
+		const state = timeTracker.state === TimeTrackerState.Started ? 'Active' : timeTracker.state === TimeTrackerState.Stopped ? 'Inactive' : 'Paused';
 
 		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', {trim: false});
 		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', {trim: false});

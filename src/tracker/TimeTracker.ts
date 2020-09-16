@@ -6,8 +6,8 @@ import { TrackedSession } from './TrackedSession';
 import { TTimeTrackerAction } from './Types';
 
 export class TimeTracker {
-    private readonly file = '.timetracker';
-    private readonly maxIdleTimeBeforeCloseSession: number = 120;
+    public readonly dataFileName = '.timetracker';
+    private readonly maxIdleTimeBeforeCloseSession: number = 10;
 
     private _state: TimeTrackerState;
     get state(): TimeTrackerState {
@@ -37,12 +37,12 @@ export class TimeTracker {
     private _tickTimer?: NodeJS.Timeout;
 
     constructor() {
-        this._state = TimeTrackerState.stopped;
+        this._state = TimeTrackerState.Stopped;
 
         const rootFolder = vscode.workspace.rootPath;
 
         if (rootFolder) {
-            const filePath = path.join(rootFolder, this.file);
+            const filePath = path.join(rootFolder, this.dataFileName);
             this._trackedData = this._trackedData ?? new TrackedData(filePath);
         }
     }
@@ -54,7 +54,7 @@ export class TimeTracker {
             }
             this._idleTime++;
             if (this.idleTime > this.maxIdleTimeBeforeCloseSession) {
-                this.stop();
+                this.pause();
             }
         }, 1000);
     }
@@ -66,7 +66,7 @@ export class TimeTracker {
     }
 
     public start(action?: TTimeTrackerAction): boolean {
-        if (this._currentSession && this._state === TimeTrackerState.started) {
+        if (this._currentSession && this._state === TimeTrackerState.Started) {
             vscode.window.showInformationMessage('Another time tracking session is already active, stop previous to start the new one');
             return false;
         }
@@ -78,26 +78,49 @@ export class TimeTracker {
             return false;
         }
 
-        const filePath = path.join(rootFolder, this.file);
+        const filePath = path.join(rootFolder, this.dataFileName);
 
         this._trackedData = this._trackedData ?? new TrackedData(filePath);
-        this._state = TimeTrackerState.started;
+        this._state = TimeTrackerState.Started;
 
         this._currentSession = new TrackedSession(true);
 
         this._onActiveStateTick = action;
-
         this.startTickTimer();
 
         return true;
     }
 
-    public stop(): boolean {
-        if (this._currentSession && this._state !== TimeTrackerState.stopped) {
+    public pause(): boolean {
+        if (this._currentSession && this._state === TimeTrackerState.Started) {
             this._currentSession?.stop();
             this._trackedData?.addSession(this._currentSession);
             delete this._currentSession;
-            this._state = TimeTrackerState.stopped;
+            this._state = TimeTrackerState.Paused;
+            this.stopTickTimer();
+            this._idleTime = 0;
+            if (this._onActiveStateTick) {
+                this._onActiveStateTick(this);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public continue(): boolean {
+        this._state = TimeTrackerState.Started;
+        this._currentSession = new TrackedSession(true);
+        this.startTickTimer();
+        return true;
+    }
+
+    public stop(): boolean {
+        if (this._currentSession && this._state !== TimeTrackerState.Stopped) {
+            this._currentSession?.stop();
+            this._trackedData?.addSession(this._currentSession);
+            delete this._currentSession;
+            this._state = TimeTrackerState.Stopped;
             this.stopTickTimer();
             this._idleTime = 0;
             if (this._onActiveStateTick) {

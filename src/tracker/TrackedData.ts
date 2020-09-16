@@ -27,6 +27,8 @@ export class TrackedData {
     }
 
     public addSession(session: TrackedSession) {
+        // Reload data from disk because file could be changed (for example .timetracker was retrieved from GIT during pull)
+        this.load();
         this._sessions.push(session.export());
         this.updateTotalTime();
         this.save();

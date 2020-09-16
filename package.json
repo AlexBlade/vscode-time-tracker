@@ -18,11 +18,15 @@
         "commands": [
             {
                 "command": "timetracker.start",
-                "title": "TimeTracker: Start"
+                "title": "Time Tracker: Start"
             },
             {
                 "command": "timetracker.stop",
-                "title": "TimeTracker: Stop"
+                "title": "Time Tracker: Stop"
+            },
+            {
+                "command": "timetracker.pause",
+                "title": "Time Tracker: Pause"
             }
         ]
     },
