@@ -7,7 +7,7 @@ import { TTimeTrackerAction } from './Types';
 
 export class TimeTracker {
     public readonly dataFileName = '.timetracker';
-    private readonly maxIdleTimeBeforeCloseSession: number = 10;
+    private readonly maxIdleTimeBeforeCloseSession: number = 120;
 
     private _state: TimeTrackerState;
     get state(): TimeTrackerState {
