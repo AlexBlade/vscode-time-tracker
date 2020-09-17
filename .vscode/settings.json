@@ -6,7 +6,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "out": false,
+        "out": true,
         ".vscode": true,
         ".vscode-test": true,
         "node_modules": true
