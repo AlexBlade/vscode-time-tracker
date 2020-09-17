@@ -4,14 +4,14 @@
     "icon": "res/icon.png",
     "displayName": "Time Tracker",
     "description": "Work hours time tracker. Count you work time in background, store it within project's files in the Git repo.",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "engines": {
         "vscode": "^1.48.0"
     },
     "repository": {
-		"type": "git",
-		"url": "https://github.com/alexblade/vscode-time-tracker.git"
-	},
+        "type": "git",
+        "url": "https://github.com/alexblade/vscode-time-tracker.git"
+    },
     "categories": [
         "Other"
     ],
