@@ -1,5 +1,5 @@
 # Time Tracker
-<img src="res/icon.png" style="float: left; margin-right: 20px"/>The <span style="font-weight: bold; color: #00cccc">Time Tracker</span> extenstion will track your time spent during coding in the **Visual Studio Code**. Just start it in the beginning of your work using `Ctrl+Shift+P` and selecting `Time Tracker:Start`.
+The <span style="font-weight: bold; color: #00cccc">Time Tracker</span> extenstion will track your time spent during coding in the **Visual Studio Code**. Just start it in the beginning of your work using `Ctrl+Shift+P` and selecting `Time Tracker:Start`.
 
 All time of activity which was spent on your work will be saved in `.timetracking` dot-file. You can push it to the GIT repo with your code to track time on all your devices.
 
