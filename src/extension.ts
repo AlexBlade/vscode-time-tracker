@@ -4,6 +4,7 @@ import path from 'path';
 import * as vscode from 'vscode';
 import { TimeTracker } from './tracker/TimeTracker';
 import { TimeTrackerState } from './tracker/TimeTrackerState';
+import fs from 'fs';
 
 const tracker: TimeTracker = new TimeTracker();
 let statusBarItem: vscode.StatusBarItem;
@@ -51,6 +52,15 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		})
 	);
+
+	const rootFolder = vscode.workspace.rootPath;
+
+	if (rootFolder) {
+		const filePath = path.join(rootFolder, tracker.dataFileName);
+		if (fs.existsSync(filePath)) {
+			tracker.start(updateStatusBarItem);
+		}
+	}
 
 	updateStatusBarItem(tracker);
 }
