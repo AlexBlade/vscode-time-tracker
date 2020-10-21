@@ -60,6 +60,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const rootFolder = vscode.workspace.rootPath;
 
+	//vscode.window.showWarningMessage(rootFolder + ' ' + autoStartTimeTracking + ' ' + autoStartTimeTracking);
+
 	if (autoStartTimeTracking) {
 		if (autoCreateTimeTrackingFile) {
 			tracker.start(updateStatusBarItem);

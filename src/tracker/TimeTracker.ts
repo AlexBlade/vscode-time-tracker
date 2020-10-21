@@ -74,7 +74,7 @@ export class TimeTracker {
         const rootFolder = vscode.workspace.rootPath;
 
         if (!rootFolder) {
-            vscode.window.showWarningMessage('A folder should be opened to store time tracking data!');
+            //vscode.window.showWarningMessage('A folder should be opened to store time tracking data!');
             return false;
         }
 

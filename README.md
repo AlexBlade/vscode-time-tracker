@@ -25,6 +25,10 @@ Use `Ctrl+Shift+P` to execute Time Tracker commands.
 
 ## Configuration
 
-Configuration will be provided in the next releases. Currently planned and developed configuration items:
-* Idle time configuration to enable set up inactivity time before time tracking pausing
-* Exclusions to make possible to do not track some files editing
+At the moment the configuration provides options described below:
+* `timetracker.autostart.autoStartTimeTracking` - Automatically start time tracking when the project (folder) is opened and `.timetracking` file already exists in the project's folder
+* `timetracker.autostart.autoCreateTimeTrackingFile` - Automatically start time tracking and create `.timetracking` file if it does not exist yet
+
+Also you can setup these options via `File` -> `Preferences` -> `Settings`
+
+![](res/settings.png)
