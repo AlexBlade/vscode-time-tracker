@@ -4,7 +4,7 @@
     "icon": "res/icon.png",
     "displayName": "Time Tracker",
     "description": "Work hours time tracker. Count you work time in background, store it within project's files in the Git repo.",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "engines": {
         "vscode": "^1.48.0"
     },
