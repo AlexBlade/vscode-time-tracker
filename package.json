@@ -33,7 +33,22 @@
                 "command": "timetracker.pause",
                 "title": "Time Tracker: Pause"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "Time Tracker",
+            "properties": {
+                "timetracker.autostart.autoStartTimeTracking": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Auto start time tracking if '.timetracker' file already exists in the opened folder"
+                },
+                "timetracker.autostart.autoCreateTimeTrackingFile": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Auto create '.timetracker' file if Auto Start is active and the file does not exist"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

@@ -53,12 +53,23 @@ export function activate(context: vscode.ExtensionContext) {
 		})
 	);
 
+	const config = vscode.workspace.getConfiguration('timetracker');
+
+	const autoStartTimeTracking = config.autostart.autoStartTimeTracking;
+	const autoCreateTimeTrackingFile = config.autostart.autoCreateTimeTrackingFile;
+
 	const rootFolder = vscode.workspace.rootPath;
 
-	if (rootFolder) {
-		const filePath = path.join(rootFolder, tracker.dataFileName);
-		if (fs.existsSync(filePath)) {
+	if (autoStartTimeTracking) {
+		if (autoCreateTimeTrackingFile) {
 			tracker.start(updateStatusBarItem);
+		} else {
+			if (rootFolder) {
+				const filePath = path.join(rootFolder, tracker.dataFileName);
+				if (fs.existsSync(filePath)) {
+					tracker.start(updateStatusBarItem);
+				}
+			}
 		}
 	}
 
