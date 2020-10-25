@@ -54,8 +54,8 @@ export class TrackedData {
         try {
             fs.writeFileSync(this._storageFile, JSON.stringify({
                 total: this._totalTime,
-                sessions: this._sessions
-            }), {
+                sessions: this._sessions,
+            }, null, vscode.workspace.getConfiguration('timetracker').dotTimeTrackerIndent), {
                 encoding: 'utf-8'
             });
         } catch (error) {
