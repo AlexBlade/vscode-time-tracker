@@ -46,6 +46,15 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Auto create '.timetracker' file if Auto Start is active and the file does not exist"
+                },
+                "timetracker.dotTimeTrackerIndent": {
+                    "type": [
+                        "string",
+                        "null",
+                        "integer"
+                    ],
+                    "default": null,
+                    "description": "Indentation of '.timetracker' file, Set to `4`, which means using 4 spaces as indentation."
                 }
             }
         }
