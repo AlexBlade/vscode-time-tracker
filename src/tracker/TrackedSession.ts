@@ -1,6 +1,8 @@
 import { Moment } from 'moment';
 import moment from 'moment';
 
+moment.fn.toJSON = function () { return this.format() };
+
 export interface ISessionInfo {
     begin: Moment;
     end: Moment;
@@ -45,7 +47,7 @@ export class TrackedSession {
 
     public export(): ISessionInfo {
         return {
-            begin:this.begin,
+            begin: this.begin,
             end: this.end,
             duration: this.duration
         };
