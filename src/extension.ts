@@ -15,7 +15,7 @@ const ICON_PAUSED = '$(debug-pause)';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('timetracker.start', ( ) => {
+		vscode.commands.registerCommand('timetracker.start', () => {
 			if (tracker.start(updateStatusBarItem)) {
 				updateStatusBarItem(tracker);
 			}
@@ -31,6 +31,11 @@ export function activate(context: vscode.ExtensionContext) {
 					updateStatusBarItem(tracker);
 				}
 			}
+		}),
+		vscode.commands.registerCommand('timetracker.recompute', () => {
+			if (tracker.recompute()) {
+				updateStatusBarItem(tracker);
+			}
 		})
 	);
 
@@ -43,10 +48,10 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.onDidChangeVisibleTextEditors(() => {
 			reactOnActions();
 		}),
-		vscode.window.onDidChangeActiveTextEditor (() => {
+		vscode.window.onDidChangeActiveTextEditor(() => {
 			reactOnActions();
 		}),
-		vscode.window.onDidChangeTextEditorSelection ((e) => {
+		vscode.window.onDidChangeTextEditorSelection((e) => {
 			if (path.basename(e.textEditor.document.fileName) !== tracker.dataFileName) {
 				reactOnActions();
 			}
@@ -99,8 +104,8 @@ function updateStatusBarItem(timeTracker: TimeTracker) {
 		const icon = timeTracker.state === TimeTrackerState.Started ? ICON_STARTED : timeTracker.state === TimeTrackerState.Stopped ? ICON_STOPPED : ICON_PAUSED;
 		const state = timeTracker.state === TimeTrackerState.Started ? 'Active' : timeTracker.state === TimeTrackerState.Stopped ? 'Inactive' : 'Paused';
 
-		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', {trim: false});
-		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', {trim: false});
+		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', { trim: false });
+		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', { trim: false });
 
 		statusBarItem.text = `${icon} ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
 	}

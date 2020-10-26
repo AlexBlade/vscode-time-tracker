@@ -136,4 +136,9 @@ export class TimeTracker {
     public resetIdleTime() {
         this._idleTime = 0;
     }
+
+    public recompute(): boolean {
+        this.trackedData?.recomputeTotalTime();
+        return true;
+    }
 }

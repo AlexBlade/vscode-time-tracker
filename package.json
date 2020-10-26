@@ -32,6 +32,10 @@
             {
                 "command": "timetracker.pause",
                 "title": "Time Tracker: Pause"
+            },
+            {
+                "command": "timetracker.recompute",
+                "title": "Time Tracker: Recompute total time"
             }
         ],
         "configuration": {
