@@ -1,4 +1,5 @@
 import fs from 'fs';
+import moment from 'moment';
 import vscode from 'vscode';
 import { ISessionInfo, TrackedSession } from './TrackedSession';
 
@@ -24,6 +25,21 @@ export class TrackedData {
 
     private updateTotalTime() {
         this._totalTime = this._sessions.map(s => s.duration).reduce((acc, d) => acc += d);
+    }
+
+    public recomputeTotalTime() {
+        this.load();
+        this._sessions.forEach(it => {
+            if (typeof it.begin === 'string') {
+                it.begin = moment(it.begin);
+            }
+            if (typeof it.end === 'string') {
+                it.end = moment(it.end);
+            }
+            it.duration = it.end.diff(it.begin, 's');
+        });
+        this.updateTotalTime();
+        this.save();
     }
 
     public addSession(session: TrackedSession) {
