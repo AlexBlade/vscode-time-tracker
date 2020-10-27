@@ -58,7 +58,7 @@
                         "integer"
                     ],
                     "default": null,
-                    "description": "Indentation of '.timetracker' file, Set to `4`, which means using 4 spaces as indentation."
+                    "description": "Indentation of '.timetracker' file. If set to a number, it indicates the number of space characters to use as indentation. If set to a string, the string is used as indentation."
                 }
             }
         }
