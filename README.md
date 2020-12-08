@@ -28,6 +28,7 @@ Use `Ctrl+Shift+P` to execute Time Tracker commands.
 At the moment the configuration provides options described below:
 * `timetracker.autostart.autoStartTimeTracking` - Automatically start time tracking when the project (folder) is opened and `.timetracking` file already exists in the project's folder
 * `timetracker.autostart.autoCreateTimeTrackingFile` - Automatically start time tracking and create `.timetracking` file if it does not exist yet
+* `timetracker.autostart.askAboutAutoStart` - Ask user before automatically start time tracking
 
 Also you can setup these options via `File` -> `Preferences` -> `Settings`
 

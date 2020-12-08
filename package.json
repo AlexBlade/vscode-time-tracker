@@ -4,7 +4,7 @@
     "icon": "res/icon.png",
     "displayName": "Time Tracker",
     "description": "Work hours time tracker. Count you work time in background, store it within project's files in the Git repo.",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "engines": {
         "vscode": "^1.48.0"
     },
@@ -50,6 +50,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Auto create '.timetracker' file if Auto Start is active and the file does not exist"
+                },
+                "timetracker.autostart.askAboutAutoStart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Ask user about auto start time tracking when auto start or auto create is active"
                 },
                 "timetracker.dotTimeTrackerIndent": {
                     "type": [
