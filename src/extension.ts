@@ -13,14 +13,17 @@ const ICON_STARTED = '$(debug-start)';
 const ICON_STOPPED = '$(debug-stop)';
 const ICON_PAUSED = '$(debug-pause)';
 
+const COMMAND_START = "timetracker.start"
+const COMMAND_STOP = "timetracker.stop"
+
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('timetracker.start', () => {
+		vscode.commands.registerCommand(COMMAND_START, () => {
 			if (tracker.start(updateStatusBarItem)) {
 				updateStatusBarItem(tracker);
 			}
 		}),
-		vscode.commands.registerCommand('timetracker.stop', () => {
+		vscode.commands.registerCommand(COMMAND_STOP, () => {
 			if (tracker.stop()) {
 				updateStatusBarItem(tracker);
 			}
@@ -124,7 +127,9 @@ function updateStatusBarItem(timeTracker: TimeTracker) {
 		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', { trim: false });
 		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', { trim: false });
 
-		statusBarItem.text = `${icon} ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
+		statusBarItem.text = `${icon} ${totalTime}+${currentSessionTime}`;
+		statusBarItem.tooltip = `State: ${state} Total: ${totalTime} Current session: ${currentSessionTime}`;
+		statusBarItem.command = timeTracker.state === TimeTrackerState.Started ? COMMAND_STOP : COMMAND_START;
 	}
 }
 
