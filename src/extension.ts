@@ -9,8 +9,8 @@ import fs from 'fs';
 const tracker: TimeTracker = new TimeTracker();
 let statusBarItem: vscode.StatusBarItem;
 
-const ICON_STARTED = '$(debug-start)';
-const ICON_STOPPED = '$(debug-stop)';
+const ICON_STARTED = '$(watch)';
+const ICON_STOPPED = '';
 const ICON_PAUSED = '$(debug-pause)';
 
 const COMMAND_START = "timetracker.start"
@@ -127,7 +127,7 @@ function updateStatusBarItem(timeTracker: TimeTracker) {
 		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', { trim: false });
 		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', { trim: false });
 
-		statusBarItem.text = `${icon} ${totalTime}+${currentSessionTime}`;
+		statusBarItem.text = `${icon}${totalTime}+${currentSessionTime}`;
 		statusBarItem.tooltip = `State: ${state} Total: ${totalTime} Current session: ${currentSessionTime}`;
 		statusBarItem.command = timeTracker.state === TimeTrackerState.Started ? COMMAND_STOP : COMMAND_START;
 	}
