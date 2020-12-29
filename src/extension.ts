@@ -9,12 +9,16 @@ import fs from 'fs';
 const tracker: TimeTracker = new TimeTracker();
 let statusBarItem: vscode.StatusBarItem;
 
-const ICON_STARTED = '$(watch)';
-const ICON_STOPPED = '';
-const ICON_PAUSED = '$(debug-pause)';
+let ICON_STARTED = '$(debug-start)';
+let ICON_STOPPED = '$(debug-stop)';
+//const ICON_STARTED = '$(watch)';
+//const ICON_STOPPED = '';
+let ICON_PAUSED = '$(debug-pause)';
 
-const COMMAND_START = "timetracker.start"
-const COMMAND_STOP = "timetracker.stop"
+const COMMAND_START = "timetracker.start";
+const COMMAND_STOP = "timetracker.stop";
+const COMMAND_PAUSE = "timetracker.pause";
+const COMMAND_RECOMPUTE = "timetracker.recompute";
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
@@ -28,14 +32,14 @@ export function activate(context: vscode.ExtensionContext) {
 				updateStatusBarItem(tracker);
 			}
 		}),
-		vscode.commands.registerCommand('timetracker.pause', () => {
+		vscode.commands.registerCommand(COMMAND_PAUSE, () => {
 			if (tracker.state === TimeTrackerState.Started) {
 				if (tracker.pause()) {
 					updateStatusBarItem(tracker);
 				}
 			}
 		}),
-		vscode.commands.registerCommand('timetracker.recompute', () => {
+		vscode.commands.registerCommand(COMMAND_RECOMPUTE, () => {
 			if (tracker.recompute()) {
 				updateStatusBarItem(tracker);
 			}
@@ -62,6 +66,8 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	const config = vscode.workspace.getConfiguration('timetracker');
+
+//	if
 
 	const autoStartTimeTracking = config.autostart.autoStartTimeTracking;
 	const autoCreateTimeTrackingFile = config.autostart.autoCreateTimeTrackingFile;
@@ -127,7 +133,8 @@ function updateStatusBarItem(timeTracker: TimeTracker) {
 		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', { trim: false });
 		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', { trim: false });
 
-		statusBarItem.text = `${icon}${totalTime}+${currentSessionTime}`;
+		statusBarItem.text = `${icon} ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
+		//statusBarItem.text = `${icon}${totalTime}+${currentSessionTime}`;
 		statusBarItem.tooltip = `State: ${state} Total: ${totalTime} Current session: ${currentSessionTime}`;
 		statusBarItem.command = timeTracker.state === TimeTrackerState.Started ? COMMAND_STOP : COMMAND_START;
 	}
