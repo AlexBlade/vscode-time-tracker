@@ -8,6 +8,7 @@ import fs from 'fs';
 
 const tracker: TimeTracker = new TimeTracker();
 let statusBarItem: vscode.StatusBarItem;
+let useCompactStatusPanel = false;
 
 let ICON_STARTED = '$(debug-start)';
 let ICON_STOPPED = '$(debug-stop)';
@@ -67,11 +68,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const config = vscode.workspace.getConfiguration('timetracker');
 
-//	if
-
 	const autoStartTimeTracking = config.autostart.autoStartTimeTracking;
 	const autoCreateTimeTrackingFile = config.autostart.autoCreateTimeTrackingFile;
 	const askAboutStart = config.autostart.askAboutAutoStart;
+	useCompactStatusPanel = config.useCompactStatusPanel;
+
+	if (useCompactStatusPanel) {
+		ICON_STARTED = '$(watch)';
+		ICON_STOPPED = '';
+	}
 
 	const rootFolder = vscode.workspace.rootPath;
 
@@ -133,9 +138,12 @@ function updateStatusBarItem(timeTracker: TimeTracker) {
 		const currentSessionTime = moment.duration(currentSessionSeconds, 's').format('hh:mm:ss', { trim: false });
 		const totalTime = moment.duration(totalSeconds, 's').format('hh:mm', { trim: false });
 
-		statusBarItem.text = `${icon} ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
-		//statusBarItem.text = `${icon}${totalTime}+${currentSessionTime}`;
-		statusBarItem.tooltip = `State: ${state} Total: ${totalTime} Current session: ${currentSessionTime}`;
+		if (useCompactStatusPanel) {
+			statusBarItem.text = `${icon}${totalTime}+${currentSessionTime}`;
+			statusBarItem.tooltip = `State: ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
+		} else {
+			statusBarItem.text = `${icon} ${state}   Total: ${totalTime}   Current session: ${currentSessionTime}`;
+		}
 		statusBarItem.command = timeTracker.state === TimeTrackerState.Started ? COMMAND_STOP : COMMAND_START;
 	}
 }

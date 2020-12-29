@@ -7,7 +7,7 @@ import { TTimeTrackerAction } from './Types';
 
 export class TimeTracker {
     public readonly dataFileName = '.timetracker';
-    private readonly maxIdleTimeBeforeCloseSession: number = 120;
+    private maxIdleTimeBeforeCloseSession: number = 120;
 
     private _state: TimeTrackerState;
     get state(): TimeTrackerState {
@@ -44,6 +44,11 @@ export class TimeTracker {
         if (rootFolder) {
             const filePath = path.join(rootFolder, this.dataFileName);
             this._trackedData = this._trackedData ?? new TrackedData(filePath);
+        }
+
+        const config = vscode.workspace.getConfiguration('timetracker');
+        if (config.delayBeforePause) {
+            this.maxIdleTimeBeforeCloseSession = config.delayBeforePause;
         }
     }
 

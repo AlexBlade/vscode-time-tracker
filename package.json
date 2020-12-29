@@ -18,7 +18,7 @@
     "activationEvents": [
         "*"
     ],
-    "main": "out/extension.js",
+    "main": "dist/tracker.js",
     "contributes": {
         "commands": [
             {
@@ -64,6 +64,16 @@
                     ],
                     "default": null,
                     "description": "Indentation of '.timetracker' file. If set to a number, it indicates the number of space characters to use as indentation. If set to a string, the string is used as indentation."
+                },
+                "timetracker.useCompactStatusPanel": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use compact mode of the status bar."
+                },
+                "timetracker.delayBeforePause": {
+                    "type": "integer",
+                    "default": 120,
+                    "description": "User inactivity time (in seconds) before entering pause mode."
                 }
             }
         }
