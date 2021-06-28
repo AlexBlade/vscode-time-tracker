@@ -51,6 +51,11 @@ export class TimeTracker {
             const filePath = path.join(rootFolder, this.dataFileName);
             this._trackedData = this._trackedData ?? new TrackedData(filePath);
         }
+
+        const config = vscode.workspace.getConfiguration('timetracker');
+        if (config.delayBeforePause) {
+            this.maxIdleTimeBeforeCloseSession = config.delayBeforePause;
+        }
     }
 
     private startTickTimer() {
