@@ -54,15 +54,13 @@ At the moment the configuration provides options described below:
 * `timetracker.autostart.autoStartTimeTracking` - Automatically start time tracking when the project (folder) is opened and `.timetracking` file already exists in the project's folder
 * `timetracker.autostart.autoCreateTimeTrackingFile` - Automatically start time tracking and create `.timetracking` file if it does not exist yet
 * `timetracker.autostart.askAboutAutoStart` - Ask user before automatically start time tracking
-* `timetracker.pauseAfter` - Time in seconds before the tracker will be paused. If set to 0 (zero) then auto pause will be disabled
-* `timetracker.dotTimeTrackerIndent` - Indentation of '.timetracker' file. If set to a number, it indicates the number of space characters to use as indentation. If set to a string, the string is used as indentation
 
 **Auto-pause behavior**
-* `timetracker.delayBeforePause` - User inactivity time (in seconds) before entering pause mode. The default value is 120 seconds (2 minutes).
+* `timetracker.pauseAfter` - Time in seconds before the tracker will be paused. If set to 0 (zero) then auto pause will be disabled
 
 **Appearance**
 * `timetracker.useCompactStatusPanel` - Use compact mode of the status bar. The default is false.
-* `timetracker.dotTimeTrackerIndent` - Indentation of '.timetracker' file. If it is set to a number, it indicates the number of space characters to use as indentation. If it is set to a string, the string is used as indentation.
+* `timetracker.dotTimeTrackerIndent` - Indentation of '.timetracker' file. If set to a number, it indicates the number of space characters to use as indentation. If set to a string, the string is used as indentation
 
 Also you can setup these options via `File` -> `Preferences` -> `Settings`
 
