@@ -4,7 +4,7 @@
     "icon": "res/icon.png",
     "displayName": "Time Tracker",
     "description": "Work hours time tracker. Count you work time in background, store it within project's files in the Git repo.",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "engines": {
         "vscode": "^1.48.0"
     },
@@ -74,11 +74,6 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Use compact mode of the status bar."
-                },
-                "timetracker.delayBeforePause": {
-                    "type": "integer",
-                    "default": 120,
-                    "description": "User inactivity time (in seconds) before entering pause mode."
                 }
             }
         }
