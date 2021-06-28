@@ -67,15 +67,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const config = vscode.workspace.getConfiguration('timetracker');
 
-//	if
-
 	const autoStartTimeTracking = config.autostart.autoStartTimeTracking;
 	const autoCreateTimeTrackingFile = config.autostart.autoCreateTimeTrackingFile;
 	const askAboutStart = config.autostart.askAboutAutoStart;
+	const pauseAfter = config.pauseAfter;
+
+	tracker.maxIdleTimeBeforeCloseSession = pauseAfter;
 
 	const rootFolder = vscode.workspace.rootPath;
-
-	//vscode.window.showWarningMessage(rootFolder + ' ' + autoStartTimeTracking + ' ' + autoStartTimeTracking);
 
 	if (autoStartTimeTracking) {
 		if (autoCreateTimeTrackingFile) {

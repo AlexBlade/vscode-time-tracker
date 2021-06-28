@@ -56,6 +56,11 @@
                     "default": false,
                     "description": "Ask user about auto start time tracking when auto start or auto create is active"
                 },
+                "timetracker.pauseAfter": {
+                    "type": "number",
+                    "default": 120,
+                    "description": "Time in seconds before the tracker will be paused. If set to 0 (zero) then auto pause will be disabled"
+                },
                 "timetracker.dotTimeTrackerIndent": {
                     "type": [
                         "string",

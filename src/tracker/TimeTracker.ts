@@ -7,7 +7,13 @@ import { TTimeTrackerAction } from './Types';
 
 export class TimeTracker {
     public readonly dataFileName = '.timetracker';
-    private readonly maxIdleTimeBeforeCloseSession: number = 120;
+    private _maxIdleTimeBeforeCloseSession: number = 120;
+    set maxIdleTimeBeforeCloseSession(value: number) {
+        this._maxIdleTimeBeforeCloseSession = value;
+    }
+    get maxIdleTimeBeforeCloseSession() {
+        return this._maxIdleTimeBeforeCloseSession;
+    }
 
     private _state: TimeTrackerState;
     get state(): TimeTrackerState {
@@ -52,8 +58,10 @@ export class TimeTracker {
             if (this._onActiveStateTick) {
                 this._onActiveStateTick(this);
             }
-            this._idleTime++;
-            if (this.idleTime > this.maxIdleTimeBeforeCloseSession) {
+            if (this._maxIdleTimeBeforeCloseSession > 0) {
+                this._idleTime++;
+            }
+            if (this.idleTime > this._maxIdleTimeBeforeCloseSession) {
                 this.pause();
             }
         }, 1000);
