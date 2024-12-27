@@ -6,7 +6,7 @@ import { TrackedSession } from './TrackedSession';
 import { TTimeTrackerAction } from './Types';
 
 export class TimeTracker {
-    public readonly dataFileName = '.timetracker';
+    public readonly emptyFile = "/";
     private _maxIdleTimeBeforeCloseSession: number = 120;
     set maxIdleTimeBeforeCloseSession(value: number) {
         this._maxIdleTimeBeforeCloseSession = value;
@@ -38,19 +38,19 @@ export class TimeTracker {
         return this._idleTime;
     }
 
+    private _storageFile: vscode.Uri;
+    public get storageFile() {
+        return this._storageFile;
+    }
+
     private _onActiveStateTick?: TTimeTrackerAction;
 
     private _tickTimer?: NodeJS.Timeout;
 
-    constructor() {
+    constructor(storageFile: vscode.Uri) {
         this._state = TimeTrackerState.Stopped;
-
-        const rootFolder = vscode.workspace.rootPath;
-
-        if (rootFolder) {
-            const filePath = path.join(rootFolder, this.dataFileName);
-            this._trackedData = this._trackedData ?? new TrackedData(filePath);
-        }
+        this._storageFile = storageFile;
+        this._trackedData = storageFile.path !== this.emptyFile ? new TrackedData(storageFile.fsPath) : undefined;
     }
 
     private startTickTimer() {
@@ -79,16 +79,12 @@ export class TimeTracker {
             return false;
         }
 
-        const rootFolder = vscode.workspace.rootPath;
-
-        if (!rootFolder) {
+        if (this.storageFile.path === this.emptyFile) {
             //vscode.window.showWarningMessage('A folder should be opened to store time tracking data!');
             return false;
         }
 
-        const filePath = path.join(rootFolder, this.dataFileName);
-
-        this._trackedData = this._trackedData ?? new TrackedData(filePath);
+        this._trackedData = this._trackedData ?? new TrackedData(this.storageFile.path);
         this._state = TimeTrackerState.Started;
 
         this._currentSession = new TrackedSession(true);
@@ -148,5 +144,15 @@ export class TimeTracker {
     public recompute(): boolean {
         this.trackedData?.recomputeTotalTime();
         return true;
+    }
+
+    public setStorageFile(storageFile: vscode.Uri) {
+        this._storageFile = storageFile;
+
+        if (this._currentSession && this._state !== TimeTrackerState.Stopped) {
+            this.stop();
+        }
+        
+        this._trackedData = storageFile.path !== this.emptyFile ? new TrackedData(storageFile.fsPath) : undefined;
     }
 }

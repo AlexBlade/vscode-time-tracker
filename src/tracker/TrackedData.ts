@@ -54,9 +54,17 @@ export class TrackedData {
         if (fs.existsSync(this._storageFile)) {
             try {
                 const dataString = fs.readFileSync(this._storageFile).toString();
+
+                if(dataString === "") {
+                    this._sessions = [];
+                    this._totalTime = 0;
+                    return;
+                }
+
                 const data = JSON.parse(dataString);
                 this._sessions = data.sessions;
                 this._totalTime = data.total;
+
             } catch (error) {
                 vscode.window.showErrorMessage(`Unable to read stored time tracking data due to: ${error.message}`);
             }
