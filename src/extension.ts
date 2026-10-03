@@ -63,6 +63,24 @@ export function activate(context: vscode.ExtensionContext) {
 			if (path.basename(e.textEditor.document.fileName) !== tracker.dataFileName) {
 				reactOnActions();
 			}
+		}),
+		vscode.workspace.onDidChangeWorkspaceFolders(() => {
+			if (tracker.state !== TimeTrackerState.Stopped) {
+				tracker.stop();
+			}
+			tracker.refreshWorkspace();
+			updateStatusBarItem(tracker);
+		}),
+		vscode.workspace.onDidChangeConfiguration(event => {
+			if (event.affectsConfiguration('timetracker.pauseAfter')) {
+				tracker.maxIdleTimeBeforeCloseSession = vscode.workspace.getConfiguration('timetracker').pauseAfter;
+			}
+			if (event.affectsConfiguration('timetracker.useCompactStatusPanel')) {
+				useCompactStatusPanel = vscode.workspace.getConfiguration('timetracker').useCompactStatusPanel;
+				ICON_STARTED = useCompactStatusPanel ? '$(watch)' : '$(debug-start)';
+				ICON_STOPPED = useCompactStatusPanel ? '' : '$(debug-stop)';
+				updateStatusBarItem(tracker);
+			}
 		})
 	);
 
@@ -81,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	tracker.maxIdleTimeBeforeCloseSession = pauseAfter;
 
-	const rootFolder = vscode.workspace.rootPath;
+	const rootFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
 	if (autoStartTimeTracking) {
 		if (autoCreateTimeTrackingFile) {
@@ -121,7 +139,9 @@ function reactOnActions() {
 			tracker.resetIdleTime();
 			break;
 		case TimeTrackerState.Paused:
-			tracker.continue();
+			if (tracker.continue()) {
+				updateStatusBarItem(tracker);
+			}
 			break;
 		case TimeTrackerState.Stopped:
 			break;
@@ -131,7 +151,7 @@ function reactOnActions() {
 function updateStatusBarItem(timeTracker: TimeTracker) {
 	const data = timeTracker.trackedData;
 	if (data) {
-		const currentSessionSeconds = tracker.currentSession?.currentDuration() ?? 0;
+		const currentSessionSeconds = timeTracker.currentSession?.currentDuration() ?? 0;
 		const totalSeconds = data.totalTime + currentSessionSeconds;
 		const icon = timeTracker.state === TimeTrackerState.Started ? ICON_STARTED : timeTracker.state === TimeTrackerState.Stopped ? ICON_STOPPED : ICON_PAUSED;
 		const state = timeTracker.state === TimeTrackerState.Started ? 'Active' : timeTracker.state === TimeTrackerState.Stopped ? 'Inactive' : 'Paused';

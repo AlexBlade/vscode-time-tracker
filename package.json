@@ -16,7 +16,11 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished",
+        "onCommand:timetracker.start",
+        "onCommand:timetracker.stop",
+        "onCommand:timetracker.pause",
+        "onCommand:timetracker.recompute"
     ],
     "main": "dist/tracker.js",
     "contributes": {
@@ -79,7 +83,7 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm run bundle:prod",
         "compile": "tsc -p ./",
         "lint": "eslint src --ext ts",
         "watch": "tsc -watch -p ./",

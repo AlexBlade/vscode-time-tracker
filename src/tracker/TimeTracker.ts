@@ -1,5 +1,5 @@
 import path from 'path';
-import vscode from 'vscode';
+import * as vscode from 'vscode';
 import { TimeTrackerState } from './TimeTrackerState';
 import { TrackedData } from './TrackedData';
 import { TrackedSession } from './TrackedSession';
@@ -19,10 +19,6 @@ export class TimeTracker {
     get state(): TimeTrackerState {
         return this._state;
     }
-    set state(value: TimeTrackerState) {
-        this._state = value;
-    }
-
     private _trackedData?: TrackedData;
     public get trackedData() {
         return this._trackedData;
@@ -41,27 +37,49 @@ export class TimeTracker {
     private _onActiveStateTick?: TTimeTrackerAction;
 
     private _tickTimer?: NodeJS.Timeout;
+    private _checkpointTicks = 0;
 
     constructor() {
         this._state = TimeTrackerState.Stopped;
+    }
 
-        const rootFolder = vscode.workspace.rootPath;
+    private getWorkspaceFilePath(): string | undefined {
+        const folder = vscode.workspace.workspaceFolders?.[0];
+        return folder ? path.join(folder.uri.fsPath, this.dataFileName) : undefined;
+    }
 
-        if (rootFolder) {
-            const filePath = path.join(rootFolder, this.dataFileName);
-            this._trackedData = this._trackedData ?? new TrackedData(filePath);
+    private ensureTrackedData(): boolean {
+        const filePath = this.getWorkspaceFilePath();
+        if (!filePath) {
+            return false;
+        }
+        if (!this._trackedData || this._trackedData.storageFile !== filePath) {
+            this._trackedData = new TrackedData(filePath);
+        }
+        return true;
+    }
+
+    public refreshWorkspace() {
+        if (this._state === TimeTrackerState.Stopped) {
+            this._trackedData = undefined;
         }
     }
 
     private startTickTimer() {
+        this.stopTickTimer();
         this._tickTimer = setInterval(() => {
+            this._checkpointTicks++;
+            if (this._currentSession && this._checkpointTicks >= 5) {
+                this._trackedData?.updateActiveSession(this._currentSession);
+                this._checkpointTicks = 0;
+            }
             if (this._onActiveStateTick) {
                 this._onActiveStateTick(this);
             }
             if (this._maxIdleTimeBeforeCloseSession > 0) {
                 this._idleTime++;
             }
-            if (this.idleTime > this._maxIdleTimeBeforeCloseSession) {
+            if (this._maxIdleTimeBeforeCloseSession > 0 && this.idleTime >= this._maxIdleTimeBeforeCloseSession) {
                 this.pause();
             }
         }, 1000);
@@ -79,19 +97,17 @@ export class TimeTracker {
             return false;
         }
 
-        const rootFolder = vscode.workspace.rootPath;
-
-        if (!rootFolder) {
-            //vscode.window.showWarningMessage('A folder should be opened to store time tracking data!');
+        if (!this.ensureTrackedData()) {
+            vscode.window.showWarningMessage('Open a workspace folder before starting time tracking.');
             return false;
         }
-
-        const filePath = path.join(rootFolder, this.dataFileName);
-
-        this._trackedData = this._trackedData ?? new TrackedData(filePath);
+        this._trackedData?.recoverActiveSession();
+        this._trackedData?.save();
         this._state = TimeTrackerState.Started;
 
         this._currentSession = new TrackedSession(true);
+        this._checkpointTicks = 0;
+        this._trackedData?.updateActiveSession(this._currentSession);
 
         this._onActiveStateTick = action;
         this.startTickTimer();
@@ -117,14 +133,27 @@ export class TimeTracker {
     }
 
     public continue(): boolean {
+        if (this._state !== TimeTrackerState.Paused || !this.ensureTrackedData()) {
+            return false;
+        }
         this._state = TimeTrackerState.Started;
         this._currentSession = new TrackedSession(true);
+        this._checkpointTicks = 0;
+        this._trackedData?.updateActiveSession(this._currentSession);
         this.startTickTimer();
         return true;
     }
 
     public stop(): boolean {
-        if (this._currentSession && this._state !== TimeTrackerState.Stopped) {
+        if (this._state === TimeTrackerState.Paused) {
+            this._state = TimeTrackerState.Stopped;
+            this._idleTime = 0;
+            if (this._onActiveStateTick) {
+                this._onActiveStateTick(this);
+            }
+            return true;
+        }
+        if (this._currentSession && this._state === TimeTrackerState.Started) {
             this._currentSession?.stop();
             this._trackedData?.addSession(this._currentSession);
             delete this._currentSession;
